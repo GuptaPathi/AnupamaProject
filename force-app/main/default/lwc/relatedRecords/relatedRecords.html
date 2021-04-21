@@ -1,0 +1,12 @@
+<template>
+    <template if:true={showTable}>
+    <lightning-datatable
+                key-field="id"
+                data={data}
+                columns={columns}>
+        </lightning-datatable>
+    </template>
+    <template if:false={showTable}>
+        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </template>
+</template>
