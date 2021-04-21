@@ -1,0 +1,49 @@
+<template>
+  <div class="border">
+    <div class="slds-grid slds-p-around_medium">
+      <div class="slds-col slds-size_8-of-12">
+        <div if:false={isInPageLayout}>
+          <lightning-record-view-form record-id={recordId} object-api-name={parentSObjectType} onload={recordLoaded}>
+            <div class="slds-hide">
+              <lightning-output-field field-name="Name">
+              </lightning-output-field>
+            </div>
+          </lightning-record-view-form>
+          <a onclick={navigateToRecordTypeHome}>{parentSObjectType}</a>
+          &nbsp;&gt;&nbsp;<a onclick={navigateToId}>{recordName}</a>
+          <br />
+        </div>
+        <lightning-icon slot="headerIcon" icon-name={relatedListIcon} 
+          onclick={onIconClicked}></lightning-icon>
+        &nbsp;&nbsp;
+        <b>
+          {relatedListLabel}&nbsp;({totalRecordCount})
+        </b>
+      </div>
+      <div class="slds-col slds-size_2-of-12" dir="rtl">
+        <lightning-button if:true={shallShowNewButton} label="New" onclick={onNewClicked}>
+        </lightning-button>
+      </div>
+      <div class="slds-col slds-size_2-of-12" dir="rtl">
+        <lightning-input if:true={shallShowFilterToggler} type="toggle" variant="label-hidden"
+          message-toggle-active={activeLabel} message-toggle-inactive={inactiveLabel} 
+          onchange={onFilterToggled} checked={useParentFilterOnly}></lightning-input>
+      </div>
+    </div>
+    <c-list-view if:true={shallRenderUserListViewData} user-list-view-id={listViewConfigId} 
+      is-related-list="true" parent-id={recordId} refresh={refresh} 
+      is-in-page-layout={isInPageLayout} ontotalrecordschanged={totalrecordsreceived} 
+      use-parent-filter-only={useParentFilterOnly}></c-list-view>
+    <center if:true={isInPageLayout}>
+      <br />
+      <div if:true={shallShowMoreLink} class="slds-grid slds-grid_align-center">
+        <div class="slds-col">
+          <a onclick={viewMore}>View More</a>
+        </div>
+      </div>
+      <br />
+    </center>
+  </div>
+  <c-lightning-component-usage-metrics component-name='relatedListView'>
+  </c-lightning-component-usage-metrics>
+</template>
