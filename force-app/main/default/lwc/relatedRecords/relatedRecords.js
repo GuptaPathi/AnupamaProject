@@ -3,27 +3,35 @@ import getRecords from '@salesforce/apex/RelatedRecordsController.getRecords';
 export default class RelatedRecords extends LightningElement {
 
     @api recordId;
-    @api sObject='Contact';
-    @api fieldSet='anupamaFS';
+    @api fieldSet;
+    @api filterInfo={};
+    @api searchClause;
+    @api sObject;
+    
     @track data = [];
     @track columns = [];
     @track fieldsInfo=[];
+    
+
     get showTable(){
+        console.log('filter data : ',this.filterInfo);
         return this.data.length>0;
     }
 
-    @wire (getRecords ,{recordId : '$recordId',sObjectName:'$sObject',fieldSetName:'$fieldSet'})
+    @wire (getRecords ,{searchClause : '$searchClause',recordId : '$recordId',sObjectName:'$sObject',fieldSetName:'$fieldSet',filterString:'$filterInfo'})
     wiredDetails ({error,data}){
         if(data){
             let fields = JSON.parse(data.FieldDetails);
             this._prepareColumns(fields);
-            this.data = JSON.parse(data.data);            
+            console.log('==hul====>> ',data.data);
+            this.data = data.data!=undefined?JSON.parse(data.data):[];   
         }else if (error){
 
         }
     }
 
     _prepareColumns(fieldsArray){
+        this.columns = [];
         fieldsArray.forEach(eachField=>{
             let column = {};
             column['label'] = eachField.label;

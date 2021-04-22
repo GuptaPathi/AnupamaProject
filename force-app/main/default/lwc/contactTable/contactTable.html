@@ -1,0 +1,7 @@
+<template>
+    <div class="slds-grid slds-p-around_small">
+        <lightning-combobox class="slds-size_1-of-4" name="Level__c" placeholder="Select Level" options={levelPickList} onchange={handleChange} ></lightning-combobox>
+        <lightning-input class="slds-size_3-of-4 slds-p-left_small" type="text" name="FirstName" onchange={handleChange}></lightning-input>
+    </div>
+    <c-related-records search-clause={searchClause} record-id={recordId} field-set={fieldSetName} s-object={objectApiName} filter-info={filterObject}></c-related-records>
+</template>

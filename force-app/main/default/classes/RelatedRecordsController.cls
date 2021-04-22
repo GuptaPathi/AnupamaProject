@@ -1,7 +1,8 @@
 public with sharing class RelatedRecordsController {
     @AuraEnabled(cacheable=true)
-    public static Map<String,String> getRecords(String recordId,String sObjectName,String fieldSetName){
+    public static Map<String,String> getRecords(String recordId,String sObjectName,String fieldSetName,Map<String,String> filterString){
         Map<String,String> returnData = new Map<String,string>();
+        system.debug('filterString : '+filterString);
        String soql = 'SELECT Id';
         List<Schema.FieldSetMember> fieldSetMemberList =  RelatedRecordsController.readFieldSet(fieldSetName,sObjectName);
         for(Schema.FieldSetMember fieldSetMemberObj : fieldSetMemberList){
