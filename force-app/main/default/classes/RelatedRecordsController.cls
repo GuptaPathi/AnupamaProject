@@ -1,17 +1,13 @@
 public with sharing class RelatedRecordsController {
     @AuraEnabled(cacheable=true)
-    public static Map<String,String> getRecords(String recordId,String sObjectName,String fieldSetName,Map<String,String> filterString){
+    public static Map<String,String> getRecords(String searchClause,String recordId,String sObjectName,String fieldSetName,Map<String,String> filterString){
         Map<String,String> returnData = new Map<String,string>();
-        system.debug('filterString : '+filterString);
+        system.debug('searchClause : '+searchClause);
        String soql = 'SELECT Id';
+        String whereClause;
         List<Schema.FieldSetMember> fieldSetMemberList =  RelatedRecordsController.readFieldSet(fieldSetName,sObjectName);
         for(Schema.FieldSetMember fieldSetMemberObj : fieldSetMemberList){
             String apiName = fieldSetMemberObj.getFieldPath();
-            system.debug('API Name ====>' + fieldSetMemberObj.getFieldPath()); //api name
-            system.debug('Label ====>' + fieldSetMemberObj.getLabel());
-            system.debug('Required ====>' + fieldSetMemberObj.getRequired());
-            system.debug('DbRequired ====>' + fieldSetMemberObj.getDbRequired());
-            system.debug('Type ====>' + fieldSetMemberObj.getType());
             if(String.valueOf(fieldSetMemberObj.getType()) == 'REFERENCE'){
                 system.debug('line 14');
                 String fields = apiName.indexOf('__c') != -1?apiName.replace('__c','__r.Name'):apiName.replace('Id','.Name');
@@ -20,9 +16,16 @@ public with sharing class RelatedRecordsController {
             soql += ','+apiName;
         }
         soql += ' From '+sObjectName;
+        if(! filterString.isEmpty()){
+			whereClause = ' WHERE '+searchClause;
+        }
+        soql += whereClause;
+        system.debug('soql : '+soql);
         system.debug('soql : '+Database.query(soql));
+        List<sObject> db = Database.query(soql);
+        String dfd = db.size()>0?JSON.serialize(db):null;
         returnData.put('FieldDetails',JSON.serialize(fieldSetMemberList));
-        returnData.put('data',JSON.serialize(Database.query(soql)));
+        returnData.put('data',dfd);
         return returnData;
         
     }
