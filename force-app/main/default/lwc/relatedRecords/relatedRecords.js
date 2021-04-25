@@ -11,7 +11,7 @@ export default class RelatedRecords extends LightningElement {
     @track data = [];
     @track columns = [];
     @track fieldsInfo=[];
-    
+    @track lookupColumns=[];
 
     get showTable(){
         console.log('filter data : ',this.filterInfo);
@@ -23,8 +23,28 @@ export default class RelatedRecords extends LightningElement {
         if(data){
             let fields = JSON.parse(data.FieldDetails);
             this._prepareColumns(fields);
-            console.log('==hul====>> ',data.data);
-            this.data = data.data!=undefined?JSON.parse(data.data):[];   
+            var receivedData = data.data!=undefined?JSON.parse(data.data):[];
+            var records=[];
+            console.log('receivedData : ',JSON.stringify(receivedData))
+            receivedData.forEach(eachRecord=>{
+                var record={};
+                Object.keys(eachRecord).forEach(eachField=>{
+                   record[eachField] = eachRecord[eachField];
+                   if(this.lookupColumns.includes(eachField)){
+                    if(eachRecord[eachField] != undefined){
+                        var nameField = eachField.indexOf('__c') != -1?eachField.replace('__c','__r'):eachField.replace('Id','');
+                        record[eachField+'url'] = '/'+eachRecord[eachField];
+                        record[eachField+'name'] = eachRecord[nameField].Name;
+                    }else{
+                        record[eachField+'url'] = '';
+                        record[eachField+'name'] = '';
+                    }
+                   }
+                })
+                records.push(record);
+            });  
+            this.data = records;
+            console.log('===finally=====>>>>      : ',JSON.stringify(this.data));
         }else if (error){
 
         }
@@ -36,10 +56,11 @@ export default class RelatedRecords extends LightningElement {
             let column = {};
             column['label'] = eachField.label;
             if(eachField.type == 'reference'){
+                this.lookupColumns.push(eachField.fieldPath);
                 this.fieldsInfo.push(eachField.fieldPath);
-                column['fieldName']= eachField.fieldPath;
-              //  column['type']='url';
-              //  column['typeAttributes'] = {label: { fieldName: eachField.fieldPath.indexOf('__c') != -1?eachField.fieldPath.replace('__c','__r.Name'):eachField.fieldPath.replace('Id','.Name') },target: '_blank'}
+                column['fieldName']= eachField.fieldPath+'url';
+                column['type']='url';
+                column['typeAttributes'] = {label: { fieldName: eachField.fieldPath+'name'},target: '_blank'}
             }else{
                 column['fieldName']=eachField.fieldPath;
                 column['type']=eachField.type;
