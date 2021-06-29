@@ -1,0 +1,33 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+  <aura:attribute name="sObjectName" type="String" default="Project__c" />
+  <aura:attribute name="sObjectLabel" type="String" default="Project" />
+  <aura:attribute name="sObjectRecordId" type="String" />
+
+  <aura:attribute name="sObjectRecordWrapper" type="Object[]" />
+
+  <aura:attribute name="sProject" type="Project__c" />
+
+  <ul class="slds-grid slds-page-header__detail-row" style="opacity: 1;">
+    <aura:iteration items="{!v.sObjectRecordWrapper}" var="sWrp">
+      <aura:if isTrue="{! !empty(sWrp.fieldValue) }">
+        <li class="slds-page-header__detail-block ">
+          <p class="slds-text-heading--label-normal slds-m-bottom--xx-small ">{!sWrp.fieldLabel}</p>
+          <p class="slds-text-body--regular ">
+            <aura:if isTrue="{! sWrp.isLink }">
+              <a href="{! '/'+ sWrp.fieldRefId}" class="outputLookupLink" style="text-decoration: underline;"> {!sWrp.fieldValue} </a>
+            </aura:if>
+            <aura:if isTrue="{! !(sWrp.isLink) }">
+              <aura:if isTrue="{! or (sWrp.fieldAPI == 'Funding_Amount_Roll_Up__c', sWrp.fieldAPI == 'TOTAL_Recoup_Amount__c') }">
+                <ui:outputCurrency value="{!sWrp.fieldValue}" />
+              </aura:if>
+              <aura:if isTrue="{! and (sWrp.fieldAPI != 'Funding_Amount_Roll_Up__c', sWrp.fieldAPI != 'TOTAL_Recoup_Amount__c') }">
+                {!sWrp.fieldValue}
+              </aura:if>
+            </aura:if>
+          </p>
+        </li>
+      </aura:if>
+    </aura:iteration>
+  </ul>
+</aura:component>

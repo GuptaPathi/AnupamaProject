@@ -1,0 +1,65 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="OC_ProjectAuraController">
+
+  <aura:attribute name="sObjectName" type="String" default="Project__c" />
+  <aura:attribute name="sObjectLabel" type="String" default="Project" />
+  <aura:attribute name="sObjectWrapper" type="Object[]" />
+
+  <aura:attribute name="projectChildMap" type="Object" />
+  <aura:attribute name="sRecordId" type="String" />
+  <aura:attribute name="sProject" type="Project__c" />
+  <aura:attribute name="uRecordId" type="String" />
+  <aura:attribute name="uProject" type="Project__c" />
+
+  <aura:attribute name="activePlatformsList" type="String[]" />
+
+  <aura:attribute name="enableDelete" type="Boolean" default="false" />
+
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+  <aura:handler event="c:OC_ProjectDetailConsoleEvent" action="{!c.handleProjectDetailConsoleEvent}" />
+  <aura:registerEvent name="consoleEvent" type="c:OC_ProjectConsoleEvent" />
+
+  <aura:attribute name="hSummarySectionFieldsList" type="Object" />
+  <aura:attribute name="modal" type="Aura.Component" />
+
+
+  <aura:attribute name="addProject" type="boolean" default="false" />
+  <aura:attribute name="contentCategory" type="String" />
+  <aura:attribute name="projectPlatform" type="String" />
+
+  <article class="slds-card">
+    <div class="slds-card__header slds-grid slds-page-header">
+      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-contact" title="description of icon when needed">
+            <lightning:icon iconName="custom:custom62" />
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h2>
+            <span class="slds-card__header-link slds-truncate slds-text-heading_small">{!v.uProject.Name}</span>
+          </h2>
+        </div>
+      </header>
+      <div class="slds-no-flex">
+        <lightning:button variant="brand" label="New Hardware Request" onclick="{!c.handleNewHardwareRequest}" />
+        <lightning:button class="addButton" variant="brand" label="+ Add Project" onclick="{!c.handleAddProject}" />
+        <aura:if isTrue="{!v.addProject}">
+          <c:ocProjectNewForm aura:id="ocNewProjectlwc" addProjectCategory="{!v.contentCategory}"
+            activePlatforms="{!v.projectPlatform}" recordId="{!v.sRecordId}" masterProjectName="{!v.uProject.Name}">
+          </c:ocProjectNewForm>
+        </aura:if>
+        <aura:if isTrue="{!v.enableDelete}">
+          <lightning:button variant="brand" label="Delete Project" onclick="{!c.handleDelete }" />
+          <lightning:button variant="brand" label="Delete Master Project" onclick="{!c.handleDeleteMasterProject }" />
+        </aura:if>
+      </div>
+    </div>
+    <div class="slds-card__body slds-card__body_inner">
+      <c:OC_ProjectConsole_Summary sObjectName="{!v.sObjectName}" sObjectLabel="{!v.sObjectLabel}"
+        sObjectRecordId="{!v.uRecordId}" sProject="{!v.uProject}" sObjectRecordWrapper="{!v.sObjectWrapper}" />
+    </div>
+  </article>
+  <c:lightningComponentUsageMetrics componentName='OC_ProjectConsole_Header'>
+  </c:lightningComponentUsageMetrics>
+</aura:component>
