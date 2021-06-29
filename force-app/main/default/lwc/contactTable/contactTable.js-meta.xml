@@ -9,5 +9,5 @@
         <targetConfig targets="lightning__RecordPage">
             <property label="Field Set Name" name="fieldSetName" type="String" description="Provide Field set Name"/>
         </targetConfig>
-    </targetConfigs>
+    </targetConfigs> 
 </LightningComponentBundle>
